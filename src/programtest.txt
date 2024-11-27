@@ -1,0 +1,21 @@
+public class Promedio {
+    public static void main(String[] args) {
+     Scanner scanner = new Scanner(System.in);
+
+                int numeroDeElementos;
+                double promedio = 0;
+
+                System.out.print("Ingrese el número de elementos: ");
+                numeroDeElementos = scanner.nextInt();
+
+                for (int i = 0; i < numeroDeElementos; i++) {
+                    System.out.print("Ingrese el elemento: ");
+                    double elemento = scanner.nextDouble();
+                    promedio += elemento;
+                }
+
+                promedio /= numeroDeElementos;
+
+                System.out.println("El promedio es: " + promedio);
+    }
+}
