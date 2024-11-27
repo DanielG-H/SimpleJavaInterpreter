@@ -1,3 +1,6 @@
+import scope.GlobalScope;
+import scope.Symbol;
+
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -5,15 +8,22 @@ public class Main {
     public static void main(String[] args) throws SyntaxException {
         String input = read("src/programtest.txt");
         JavaLexer lexer = new JavaLexer();
-        JavaParser parser = new JavaParser();
+        GlobalScope globalScope = new GlobalScope();
+        JavaParser parser = new JavaParser(globalScope);
         lexer.analyze(input);
 
-        System.out.println("*** Analisis lexico ***");
+        System.out.println("\n*** Analisis lexico ***");
         for (Token t : lexer.getTokens()) {
             System.out.println(t);
         }
 
+        System.out.println("\n*** Analisis sintactico ***");
         parser.analyze(lexer);
+
+        System.out.println("\n*** Tabla de simbolos ***");
+        for (Symbol s: globalScope.getSymbols().values()) {
+            System.out.println(s);
+        }
     }
 
     private static String read(String name) {
