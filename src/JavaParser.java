@@ -396,6 +396,10 @@ public class JavaParser {
                     if (Enunciados()) {
                         if (match(JavaLexer.RIGHT_BRACKET)) {
                             generator.connectSi(tupleIndex);
+                            if (ElseIf()) {
+                                while (ElseIf());
+                            }
+                            if (Else()) return true;
                             return true;
                         }
                     }
@@ -403,6 +407,42 @@ public class JavaParser {
             }
         }
 
+        tokenIndex = auxIndex;
+        return false;
+    }
+
+    private boolean ElseIf() {
+        int auxIndex = tokenIndex;
+        int tupleIndex = generator.getTuples().size();
+        if (match(JavaLexer.ELSE)) {
+            if (match(JavaLexer.IF)) {
+                if (Comparacion()) {
+                    if (match(JavaLexer.LEFT_BRACKET)) {
+                        if (Enunciados()) {
+                            if (match(JavaLexer.RIGHT_BRACKET)) {
+                                generator.connectSi(tupleIndex);
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        tokenIndex = auxIndex;
+        return false;
+    }
+
+    private boolean Else() {
+        int auxIndex = tokenIndex;
+        if (match(JavaLexer.ELSE)) {
+            if (match(JavaLexer.LEFT_BRACKET)) {
+                if (Enunciados()) {
+                    if (match(JavaLexer.RIGHT_BRACKET)) {
+                        return true;
+                    }
+                }
+            }
+        }
         tokenIndex = auxIndex;
         return false;
     }
