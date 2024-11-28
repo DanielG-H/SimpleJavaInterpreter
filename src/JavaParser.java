@@ -254,8 +254,11 @@ public class JavaParser {
             if (resolve()) {
                 if (match(JavaLexer.ARITHMETIC) || match(JavaLexer.PLUS) || match(JavaLexer.MINUS)) {
                     if (match(JavaLexer.EQUALS)) {
-                        if (Expresion()) {
-                            if (match(JavaLexer.SEMICOLON)) return true;
+                        if (Valor()) {
+                            if (match(JavaLexer.SEMICOLON)) {
+                                generator.createTupleAsignacion(auxIndex, tokenIndex+2);
+                                return true;
+                            }
                         }
                     }
                 }

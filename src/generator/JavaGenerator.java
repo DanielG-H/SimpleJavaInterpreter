@@ -23,6 +23,14 @@ public class JavaGenerator {
                     tokens.get(initialIndex+4),
                     tuples.size()+1,
                     tuples.size()+1));
+
+        } else if (finalIndex - initialIndex == 7) {
+            tuples.add(new Asignacion(tokens.get(initialIndex),
+                    tokens.get(initialIndex),
+                    tokens.get(initialIndex + 1),
+                    tokens.get(initialIndex + 3),
+                    tuples.size() + 1,
+                    tuples.size() + 1));
         } else if (finalIndex - initialIndex == 4) {
             tuples.add(new Asignacion(tokens.get(initialIndex),
                     tokens.get(initialIndex),

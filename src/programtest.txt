@@ -11,10 +11,10 @@ public class Promedio {
                 for (int i = 0; i < numeroDeElementos; i++) {
                     System.out.print("Ingrese el elemento: ");
                     double elemento = scanner.nextDouble();
-                    promedio = promedio + elemento;
+                    promedio += elemento;
                 }
 
-                promedio = promedio / numeroDeElementos;
+                promedio /= numeroDeElementos;
 
                 System.out.println("El promedio es: " + promedio);
     }
