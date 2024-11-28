@@ -1,3 +1,5 @@
+package generator;
+
 public class Token {
     private final TokenType type;
     private final String name;

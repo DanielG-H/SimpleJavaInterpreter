@@ -1,3 +1,5 @@
+package generator;
+
 public class TokenType {
     private final String name; // token category
     private final String pattern; // regular expression defining it

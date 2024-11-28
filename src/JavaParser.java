@@ -1,3 +1,5 @@
+import generator.JavaGenerator;
+import generator.Token;
 import scope.*;
 
 import java.util.ArrayList;
@@ -7,9 +9,11 @@ public class JavaParser {
     private int tokenIndex = 0;
     private SyntaxException ex;
     private Scope currentScope;
+    private JavaGenerator generator;
 
-    public JavaParser(Scope globalScope) {
+    public JavaParser(Scope globalScope, JavaGenerator generator) {
         this.currentScope = globalScope;
+        this.generator = generator;
     }
 
     public void analyze(JavaLexer lexer) throws SyntaxException {
@@ -79,7 +83,10 @@ public class JavaParser {
                                                         if (match(JavaLexer.LEFT_BRACKET)) {
                                                             if (Enunciados()) {
                                                                 if (match(JavaLexer.RIGHT_BRACKET)) {
-                                                                    if (match(JavaLexer.RIGHT_BRACKET)) return true;
+                                                                    if (match(JavaLexer.RIGHT_BRACKET)) {
+                                                                        generator.createTupleFinPrograma();
+                                                                        return true;
+                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -223,7 +230,10 @@ public class JavaParser {
             if (resolve()) {
                 if (match(JavaLexer.EQUALS)) {
                     if (Expresion()) {
-                        if (match(JavaLexer.SEMICOLON)) return true;
+                        if (match(JavaLexer.SEMICOLON)) {
+                            generator.createTupleAsignacion(auxIndex, tokenIndex);
+                            return true;
+                        }
                     }
                 }
             }
@@ -278,7 +288,10 @@ public class JavaParser {
             if (resolve()) {
                 if (match(JavaLexer.DOT)) {
                     if (match(JavaLexer.READ)) {
-                        if (match(JavaLexer.SEMICOLON)) return true;
+                        if (match(JavaLexer.SEMICOLON)) {
+                            generator.createTupleLeer(auxIndex-2);
+                            return true;
+                        }
                     }
                 }
             }
@@ -298,7 +311,10 @@ public class JavaParser {
                         if (match(JavaLexer.IDENTIFIER)) {
                             if (resolve()) {
                                 if (match(JavaLexer.RIGHT_PARENTHESIS)) {
-                                    if (match(JavaLexer.SEMICOLON)) return true;
+                                    if (match(JavaLexer.SEMICOLON)) {
+                                        generator.createTupleEscribir(auxIndex, tokenIndex);
+                                        return true;
+                                    }
                                 }
                             }
                         }
@@ -314,7 +330,10 @@ public class JavaParser {
             if (match(JavaLexer.LEFT_PARENTHESIS)) {
                 if (match(JavaLexer.STRING)) {
                     if (match(JavaLexer.RIGHT_PARENTHESIS)) {
-                        if (match(JavaLexer.SEMICOLON)) return true;
+                        if (match(JavaLexer.SEMICOLON)) {
+                            generator.createTupleEscribir(auxIndex, tokenIndex);
+                            return true;
+                        }
                     }
                 }
             }
@@ -327,7 +346,10 @@ public class JavaParser {
                 if (match(JavaLexer.IDENTIFIER)) {
                     if (resolve()) {
                         if (match(JavaLexer.RIGHT_PARENTHESIS)) {
-                            if (match(JavaLexer.SEMICOLON)) return true;
+                            if (match(JavaLexer.SEMICOLON)) {
+                                generator.createTupleEscribir(auxIndex, tokenIndex);
+                                return true;
+                            }
                         }
                     }
                 }
@@ -340,12 +362,14 @@ public class JavaParser {
 
     private boolean Si() {
         int auxIndex = tokenIndex;
+        int tupleIndex = generator.getTuples().size();
 
         if (match(JavaLexer.IF)) {
             if (Comparacion()) {
                 if (match(JavaLexer.LEFT_BRACKET)) {
                     if (Enunciados()) {
                         if (match(JavaLexer.RIGHT_BRACKET)) {
+                            generator.connectSi(tupleIndex);
                             return true;
                         }
                     }
@@ -364,7 +388,10 @@ public class JavaParser {
             if (Valor()) {
                 if (match(JavaLexer.RELATIONAL)) {
                     if (Valor()) {
-                        if (match(JavaLexer.RIGHT_PARENTHESIS)) return true;
+                        if (match(JavaLexer.RIGHT_PARENTHESIS)) {
+                            generator.createTupleComparacion(auxIndex+1);
+                            return true;
+                        }
                     }
                 }
             }
@@ -376,12 +403,14 @@ public class JavaParser {
 
     private boolean Mientras() {
         int auxIndex = tokenIndex;
+        int tupleIndex = generator.getTuples().size();
 
         if (match(JavaLexer.WHILE)) {
             if (Comparacion()) {
                 if (match(JavaLexer.LEFT_BRACKET)) {
                     if (Enunciados()) {
                         if (match(JavaLexer.RIGHT_BRACKET)) {
+                            generator.connectMientras(tupleIndex);
                             return true;
                         }
                     }

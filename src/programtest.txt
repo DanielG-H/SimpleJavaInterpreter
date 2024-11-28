@@ -5,16 +5,18 @@ public class Promedio {
                 int numeroDeElementos;
                 double promedio = 0;
 
-                System.out.print("Ingrese el número de elementos: ");
+                System.out.println("Ingrese el número de elementos: ");
                 numeroDeElementos = scanner.nextInt();
 
-                for (int i = 0; i < numeroDeElementos; i++) {
-                    System.out.print("Ingrese el elemento: ");
-                    double elemento = scanner.nextDouble();
-                    promedio += elemento;
+                int i = 0;
+                while (i < numeroDeElementos) {
+                System.out.println("Ingrese el elemento: ");
+                double elemento = scanner.nextDouble();
+                promedio = promedio + elemento;
+                i = i + 1;
                 }
 
-                promedio /= numeroDeElementos;
+                promedio = promedio / numeroDeElementos;
 
                 System.out.println("El promedio es: " + promedio);
     }

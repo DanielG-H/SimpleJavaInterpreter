@@ -1,3 +1,7 @@
+import generator.JavaGenerator;
+import generator.Token;
+import generator.Tuple;
+import interpreter.JavaInterpreter;
 import scope.GlobalScope;
 import scope.Symbol;
 
@@ -9,7 +13,8 @@ public class Main {
         String input = read("src/programtest.txt");
         JavaLexer lexer = new JavaLexer();
         GlobalScope globalScope = new GlobalScope();
-        JavaParser parser = new JavaParser(globalScope);
+        JavaGenerator generator = new JavaGenerator(lexer.getTokens());
+        JavaParser parser = new JavaParser(globalScope, generator);
         lexer.analyze(input);
 
         System.out.println("\n*** Analisis lexico ***");
@@ -24,6 +29,16 @@ public class Main {
         for (Symbol s: globalScope.getSymbols().values()) {
             System.out.println(s);
         }
+
+        System.out.println("\n*** Tuplas generadas ***");
+        for (Tuple t: generator.getTuples()) {
+            System.out.println(t);
+        }
+
+        System.out.println("\n*** Ejecucion del programa ***\n");
+
+        JavaInterpreter interpreter = new JavaInterpreter(globalScope);
+        interpreter.interpret(generator.getTuples());
     }
 
     private static String read(String name) {
