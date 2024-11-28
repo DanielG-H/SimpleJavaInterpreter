@@ -12,6 +12,7 @@ public class JavaLexer {
     public static String NUM = "NUM";
     public static String STRING = "STRING";
     public static String PLUS = "PLUS";
+    public static String MINUS = "MINUS";
     public static String ARITHMETIC = "ARITHMETIC";
     public static String RELATIONAL = "RELATIONAL";
     public static String EQUALS = "EQUALS";
@@ -54,7 +55,8 @@ public class JavaLexer {
         types.add(new TokenType(NUM, "-?[0-9]+(\\.([0-9]+))?"));
         types.add(new TokenType(STRING, "\".*\""));
         types.add(new TokenType(PLUS, "\\+"));
-        types.add(new TokenType(ARITHMETIC, "[\\%*/-]"));
+        types.add(new TokenType(MINUS, "\\-"));
+        types.add(new TokenType(ARITHMETIC, "[\\%*/]"));
         types.add(new TokenType(RELATIONAL, "<=|>=|==|<|>|!="));
         types.add(new TokenType(EQUALS, "="));
         types.add(new TokenType(READ, "nextDouble\\(\\)|nextInt\\(\\)|nextFloat\\(\\)|nextLine\\(\\)"));

@@ -226,6 +226,15 @@ public class JavaParser {
 
         tokenIndex = auxIndex;
 
+        if (IncrementDecrement()) {
+            if (match(JavaLexer.SEMICOLON)) {
+                generator.createTupleAsignacion(auxIndex, tokenIndex);
+                return true;
+            }
+        }
+
+        tokenIndex = auxIndex;
+
         if (match(JavaLexer.IDENTIFIER)) {
             if (resolve()) {
                 if (match(JavaLexer.EQUALS)) {
@@ -243,7 +252,7 @@ public class JavaParser {
 
         if (match(JavaLexer.IDENTIFIER)) {
             if (resolve()) {
-                if (match(JavaLexer.ARITHMETIC) || match(JavaLexer.PLUS)) {
+                if (match(JavaLexer.ARITHMETIC) || match(JavaLexer.PLUS) || match(JavaLexer.MINUS)) {
                     if (match(JavaLexer.EQUALS)) {
                         if (Expresion()) {
                             if (match(JavaLexer.SEMICOLON)) return true;
@@ -256,11 +265,25 @@ public class JavaParser {
         return false;
     }
 
+    private boolean IncrementDecrement() {
+        int auxIndex = tokenIndex;
+        if (match(JavaLexer.IDENTIFIER)) {
+            if (resolve()) {
+                if (match(JavaLexer.PLUS) && match(JavaLexer.PLUS) ||
+                        match(JavaLexer.MINUS) && match(JavaLexer.MINUS)) {
+                        return true;
+                }
+            }
+        }
+        tokenIndex = auxIndex;
+        return false;
+    }
+
     private boolean Expresion() {
         int auxIndex = tokenIndex;
 
         if (Valor()) {
-            if (match(JavaLexer.ARITHMETIC) || match(JavaLexer.PLUS)) {
+            if (match(JavaLexer.ARITHMETIC) || match(JavaLexer.PLUS) || match(JavaLexer.MINUS)) {
                 if (Valor()) {
                     return true;
                 }
@@ -424,6 +447,8 @@ public class JavaParser {
 
     private boolean Repite() {
         int auxIndex = tokenIndex;
+        int tupleIndex = generator.getTuples().size();
+        int incrementDecrementIndex;
 
         if (match(JavaLexer.FOR)) {
             if (match(JavaLexer.LEFT_PARENTHESIS)) {
@@ -437,18 +462,16 @@ public class JavaParser {
                                         if (match(JavaLexer.RELATIONAL)) {
                                             if (Valor()) {
                                                 if (match(JavaLexer.SEMICOLON)) {
-                                                    if (match(JavaLexer.IDENTIFIER)) {
-                                                        if (resolve()) {
-                                                            if (match(JavaLexer.PLUS)) {
-                                                                if (match(JavaLexer.PLUS)) {
-                                                                    if (match(JavaLexer.RIGHT_PARENTHESIS)) {
-                                                                        if (match(JavaLexer.LEFT_BRACKET)) {
-                                                                            if (Enunciados()) {
-                                                                                if (match(JavaLexer.RIGHT_BRACKET)) {
-                                                                                    return true;
-                                                                                }
-                                                                            }
-                                                                        }
+                                                    generator.createTupleComparacion(auxIndex+7);
+                                                    incrementDecrementIndex = tokenIndex;
+                                                    if (IncrementDecrement()) {
+                                                        if (match(JavaLexer.RIGHT_PARENTHESIS)) {
+                                                            if (match(JavaLexer.LEFT_BRACKET)) {
+                                                                if (Enunciados()) {
+                                                                    if (match(JavaLexer.RIGHT_BRACKET)) {
+                                                                        generator.createTupleAsignacion(incrementDecrementIndex, incrementDecrementIndex+4);
+                                                                        generator.connectMientras(tupleIndex);
+                                                                        return true;
                                                                     }
                                                                 }
                                                             }
