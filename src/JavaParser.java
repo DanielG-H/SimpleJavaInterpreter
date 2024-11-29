@@ -117,8 +117,11 @@ public class JavaParser {
                 }
 
                 if (match(JavaLexer.EQUALS)) {
-                    if (match(JavaLexer.STR) || match(JavaLexer.NUM) || match(JavaLexer.BOOL)) {
-                        if (match(JavaLexer.SEMICOLON)) return true;
+                    if (match(JavaLexer.STRING) || match(JavaLexer.NUM) || match(JavaLexer.BOOL)) {
+                        if (match(JavaLexer.SEMICOLON)) {
+                            generator.createTupleAsignacion(auxIndex+1, tokenIndex);
+                            return true;
+                        }
                     }
 
                     if (Leer()) return true;
@@ -512,7 +515,7 @@ public class JavaParser {
                                                             if (match(JavaLexer.LEFT_BRACKET)) {
                                                                 if (Enunciados()) {
                                                                     if (match(JavaLexer.RIGHT_BRACKET)) {
-                                                                        generator.createTupleAsignacion(incrementDecrementIndex, incrementDecrementIndex+4);
+                                                                        generator.createTupleAsignacion(incrementDecrementIndex, incrementDecrementIndex+8);
                                                                         generator.connectMientras(tupleIndex);
                                                                         return true;
                                                                     }

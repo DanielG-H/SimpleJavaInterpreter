@@ -11,12 +11,12 @@ public class JavaGenerator {
     }
 
     public void createTupleAsignacion(int initialIndex, int finalIndex) {
-        if (finalIndex - initialIndex == 5) {
+        if (finalIndex - initialIndex == 4) { // i = 0  expression
             tuples.add(new Asignacion(tokens.get(initialIndex),
                     tokens.get(initialIndex+2),
                     tuples.size()+1,
                     tuples.size()+1));
-        } else if (finalIndex - initialIndex == 6) {
+        } else if (finalIndex - initialIndex == 6) { // i = i + 1 expression
             tuples.add(new Asignacion(tokens.get(initialIndex),
                     tokens.get(initialIndex+2),
                     tokens.get(initialIndex+3),
@@ -24,14 +24,14 @@ public class JavaGenerator {
                     tuples.size()+1,
                     tuples.size()+1));
 
-        } else if (finalIndex - initialIndex == 7) {
+        } else if (finalIndex - initialIndex == 7) { // i += 1 expression
             tuples.add(new Asignacion(tokens.get(initialIndex),
                     tokens.get(initialIndex),
                     tokens.get(initialIndex + 1),
                     tokens.get(initialIndex + 3),
                     tuples.size() + 1,
                     tuples.size() + 1));
-        } else if (finalIndex - initialIndex == 4) {
+        } else if (finalIndex - initialIndex == 8){ // i++ expression
             tuples.add(new Asignacion(tokens.get(initialIndex),
                     tokens.get(initialIndex),
                     tokens.get(initialIndex+1),

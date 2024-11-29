@@ -59,7 +59,7 @@ public class Asignacion extends Tuple {
         }
 
         if (operator == null) {
-            v.setValue(Float.parseFloat(value1.getName()));
+            v.setValue(operator1);
         } else if (value2 == null) {
             if (operator.getName().equals("+"))  v.setValue(v.getValue() + 1);
             else v.setValue(v.getValue() - 1);
