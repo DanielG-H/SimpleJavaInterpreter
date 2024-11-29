@@ -3,6 +3,8 @@ import generator.Token;
 import scope.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class JavaParser {
     private ArrayList<Token> tokens;
@@ -389,17 +391,25 @@ public class JavaParser {
     private boolean Si() {
         int auxIndex = tokenIndex;
         int tupleIndex = generator.getTuples().size();
+        boolean isBlock = false;
+        LinkedHashMap<Integer, Integer> blocks = new LinkedHashMap<>();
 
         if (match(JavaLexer.IF)) {
             if (Comparacion()) {
                 if (match(JavaLexer.LEFT_BRACKET)) {
                     if (Enunciados()) {
                         if (match(JavaLexer.RIGHT_BRACKET)) {
-                            generator.connectSi(tupleIndex);
-                            if (ElseIf()) {
-                                while (ElseIf());
+                            blocks.put(tupleIndex, generator.getTuples().size()-1);
+                            if (ElseIf(blocks)) {
+                                while (ElseIf(blocks));
+                                isBlock = true;
                             }
-                            if (Else()) return true;
+                            if (Else(blocks)) {
+                                isBlock = true;
+                                generator.connectIfBlock(blocks, isBlock);
+                                return true;
+                            }
+                            generator.connectIfBlock(blocks, isBlock);
                             return true;
                         }
                     }
@@ -411,7 +421,7 @@ public class JavaParser {
         return false;
     }
 
-    private boolean ElseIf() {
+    private boolean ElseIf(LinkedHashMap<Integer, Integer> blocks) {
         int auxIndex = tokenIndex;
         int tupleIndex = generator.getTuples().size();
         if (match(JavaLexer.ELSE)) {
@@ -420,7 +430,7 @@ public class JavaParser {
                     if (match(JavaLexer.LEFT_BRACKET)) {
                         if (Enunciados()) {
                             if (match(JavaLexer.RIGHT_BRACKET)) {
-                                generator.connectSi(tupleIndex);
+                                blocks.put(tupleIndex, generator.getTuples().size()-1);
                                 return true;
                             }
                         }
@@ -432,12 +442,15 @@ public class JavaParser {
         return false;
     }
 
-    private boolean Else() {
+    private boolean Else(LinkedHashMap<Integer, Integer> blocks) {
         int auxIndex = tokenIndex;
+        int tupleIndex = blocks.sequencedValues().getLast();
+
         if (match(JavaLexer.ELSE)) {
             if (match(JavaLexer.LEFT_BRACKET)) {
                 if (Enunciados()) {
                     if (match(JavaLexer.RIGHT_BRACKET)) {
+                        blocks.put(tupleIndex, generator.getTuples().size()-1);
                         return true;
                     }
                 }

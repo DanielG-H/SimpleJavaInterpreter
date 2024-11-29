@@ -1,6 +1,8 @@
 package generator;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class JavaGenerator {
     private final ArrayList<Tuple> tuples = new ArrayList<>();
@@ -83,6 +85,20 @@ public class JavaGenerator {
         }
 
         tuples.get(initialTuple).setJumpFalse(finalTuple+1);
+    }
+
+
+    public void connectIfBlock(LinkedHashMap<Integer, Integer> blocks, boolean isBlock) {
+        int finalTuple = tuples.size()-1;
+
+        for (Map.Entry<Integer, Integer> entry : blocks.entrySet()) {
+            System.out.println(tuples.get(entry.getKey()));
+            System.out.println(entry.getKey() + " = " + entry.getValue());
+            tuples.get(entry.getKey()).setJumpFalse(entry.getValue()+1);
+            if (isBlock) {
+                tuples.get(entry.getValue()).setJumpTrue(finalTuple+1);
+            }
+        }
     }
 
     public void connectMientras(int initialTuple) {
