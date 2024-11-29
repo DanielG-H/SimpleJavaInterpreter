@@ -1,4 +1,7 @@
 public class Promedio {
+    public static void method1() {
+       System.out.println("hello");
+    }
     public static void main(String[] args) {
      Scanner scanner = new Scanner(System.in);
 
@@ -17,5 +20,6 @@ public class Promedio {
                 promedio /= numeroDeElementos;
 
                 System.out.println("El promedio es: " + promedio);
+                method1();
     }
 }
