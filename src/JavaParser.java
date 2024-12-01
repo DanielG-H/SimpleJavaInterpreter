@@ -91,6 +91,7 @@ public class JavaParser {
             if (match(JavaLexer.CLASS)) {
                 if (match(JavaLexer.IDENTIFIER)) {
                     if (match(JavaLexer.LEFT_BRACKET)) {
+                        Declaraciones();
                         Methods();
                         if (match(JavaLexer.PUBLIC)) {
                             if (match(JavaLexer.STATIC)) {
@@ -135,6 +136,16 @@ public class JavaParser {
             return true;
         }
 
+        tokenIndex = auxIndex;
+        return false;
+    }
+
+    private boolean Declaraciones() {
+        int auxIndex = tokenIndex;
+        if (Declaracion()) {
+            while (Declaracion());
+            return true;
+        }
         tokenIndex = auxIndex;
         return false;
     }
@@ -606,7 +617,6 @@ public class JavaParser {
 
     private boolean Repite() {
         int auxIndex = tokenIndex;
-        int tupleIndex = generator.getTuples().size();
         int incrementDecrementIndex;
 
         if (match(JavaLexer.FOR)) {
@@ -617,10 +627,12 @@ public class JavaParser {
                         if (match(JavaLexer.EQUALS)) {
                             if (match(JavaLexer.NUM)) {
                                 if (match(JavaLexer.SEMICOLON)) {
+                                    generator.createTupleAsignacion(auxIndex+3, tokenIndex);
                                     if (Valor()) {
                                         if (match(JavaLexer.RELATIONAL)) {
                                             if (Valor()) {
                                                 if (match(JavaLexer.SEMICOLON)) {
+                                                    int tupleIndex = generator.getTuples().size();
                                                     generator.createTupleComparacion(auxIndex + 7);
                                                     incrementDecrementIndex = tokenIndex;
                                                     if (IncrementDecrement()) {

@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        String input = read("src/test/programtest.txt");
+        String input = read("src/test/programtest2.txt");
         JavaLexer lexer = new JavaLexer();
         GlobalScope globalScope = new GlobalScope();
         JavaGenerator generator = new JavaGenerator(lexer.getTokens());
