@@ -21,9 +21,6 @@ public class JavaParser {
         currentScope.define(new BuiltInTypeSymbol("int"));
         currentScope.define(new BuiltInTypeSymbol("float"));
         currentScope.define(new BuiltInTypeSymbol("double"));
-        currentScope.define(new BuiltInTypeSymbol("char"));
-        currentScope.define(new BuiltInTypeSymbol("String"));
-        currentScope.define(new BuiltInTypeSymbol("boolean"));
         currentScope.define(new BuiltInTypeSymbol("void"));
         currentScope.define(new BuiltInTypeSymbol("Scanner"));
 
@@ -157,7 +154,7 @@ public class JavaParser {
 
         if (match(JavaLexer.PUBLIC)) {
             if (match(JavaLexer.STATIC)) {
-                if (basicTypes() || match(JavaLexer.VOID)) {
+                if (match(JavaLexer.VOID)) {
                     if (match(JavaLexer.IDENTIFIER)) {
                         if (match(JavaLexer.LEFT_PARENTHESIS)) {
                             if (parameter(params)) {
@@ -238,7 +235,7 @@ public class JavaParser {
                 }
 
                 if (match(JavaLexer.EQUALS)) {
-                    if (match(JavaLexer.STRING) || match(JavaLexer.NUM) || match(JavaLexer.BOOL)) {
+                    if (match(JavaLexer.NUM)) {
                         if (match(JavaLexer.SEMICOLON)) {
                             generator.createTupleAsignacion(auxIndex + 1, tokenIndex);
                             return true;
@@ -665,7 +662,6 @@ public class JavaParser {
     }
 
     private boolean basicTypes() {
-        return match(JavaLexer.INT) || match(JavaLexer.CHAR) || match(JavaLexer.BOOLEAN) || match(JavaLexer.STR)
-                || match(JavaLexer.FLOAT) || match(JavaLexer.DOUBLE);
+        return match(JavaLexer.INT) || match(JavaLexer.FLOAT) || match(JavaLexer.DOUBLE);
     }
 }
