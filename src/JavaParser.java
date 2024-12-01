@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class JavaParser {
     private ArrayList<Token> tokens;
     private int tokenIndex = 0;
-    private SyntaxException ex;
+    private Exception ex;
     private Scope currentScope;
     private JavaGenerator generator;
 
@@ -16,7 +16,7 @@ public class JavaParser {
         this.generator = generator;
     }
 
-    public void analyze(JavaLexer lexer) throws SyntaxException {
+    public void analyze(JavaLexer lexer) throws Exception {
         tokens = lexer.getTokens();
         currentScope.define(new BuiltInTypeSymbol("int"));
         currentScope.define(new BuiltInTypeSymbol("float"));
@@ -48,21 +48,14 @@ public class JavaParser {
         return false;
     }
 
-    private void define() throws SemanticException {
+    private void define() {
         BuiltInTypeSymbol b = (BuiltInTypeSymbol) currentScope.resolve(tokens.get(tokenIndex - 2).getName());
-        if (b == null) {
-            throw new SemanticException("El tipo: '" + tokens.get(tokenIndex - 2).getName() + "' no fue definido.");
-        }
         currentScope.define(new VariableSymbol(tokens.get(tokenIndex - 1).getName(), b));
         System.out.println("Definida");
     }
 
     private void defineMethod(ArrayList<VariableSymbol> parameters, String methodType, String methodIdentifier) {
         BuiltInTypeSymbol b = (BuiltInTypeSymbol) currentScope.resolve(methodType);
-        if (b == null) {
-            throw new SemanticException("El tipo: '" + methodType + "' no fue definido.");
-        }
-
         MethodSymbol m = new MethodSymbol(methodIdentifier, parameters, currentScope);
         currentScope.define(m);
         currentScope = m;
@@ -71,26 +64,22 @@ public class JavaParser {
 
     private void resolveTypeParams(ArrayList<VariableSymbol> parameters) {
         BuiltInTypeSymbol b = (BuiltInTypeSymbol) currentScope.resolve(tokens.get(tokenIndex - 2).getName());
-        if (b == null) {
-            throw new SemanticException("El tipo: '" + tokens.get(tokenIndex - 2).getName() + "' no fue definido.");
-        }
         parameters.add(new VariableSymbol(tokens.get(tokenIndex - 1).getName(), b));
     }
 
-    private boolean resolve() throws SemanticException {
+    private boolean resolve() {
         VariableSymbol v = (VariableSymbol) currentScope.resolve(tokens.get(tokenIndex - 1).getName());
-        return resolveInternal(v);
+        return resolveInternal(v, tokenIndex - 1);
     }
 
     private boolean resolveMethod() {
-        System.out.println("Este es el metodo a resolve: " + tokens.get(tokenIndex - 2).getName());
         MethodSymbol m = (MethodSymbol) currentScope.resolve(tokens.get(tokenIndex - 2).getName());
-        return resolveInternal(m);
+        return resolveInternal(m, tokenIndex - 2);
     }
 
-    private boolean resolveInternal(Symbol s) {
+    private boolean resolveInternal(Symbol s, int identifierIndex) {
         if (s == null) {
-            ex = new SyntaxException("La variable: '" + tokens.get(tokenIndex - 1).getName() + "' no fue declarada.");
+            ex = new SemanticException("La variable: '" + tokens.get(identifierIndex).getName() + "' no fue declarada.");
             return false;
         }
         System.out.println("Resuelta");
@@ -113,10 +102,12 @@ public class JavaParser {
                                                     if (match(JavaLexer.RIGHT_PARENTHESIS)) {
                                                         if (match(JavaLexer.LEFT_BRACKET)) {
                                                             if (Enunciados()) {
-                                                                if (match(JavaLexer.RIGHT_BRACKET)) {
+                                                                if (!(ex instanceof SemanticException)) {
                                                                     if (match(JavaLexer.RIGHT_BRACKET)) {
-                                                                        generator.createTupleFinPrograma();
-                                                                        return true;
+                                                                        if (match(JavaLexer.RIGHT_BRACKET)) {
+                                                                            generator.createTupleFinPrograma();
+                                                                            return true;
+                                                                        }
                                                                     }
                                                                 }
                                                             }
@@ -129,6 +120,7 @@ public class JavaParser {
                                 }
                             }
                         }
+
                     }
                 }
             }
@@ -161,7 +153,7 @@ public class JavaParser {
                                 }
                             }
                             if (match(JavaLexer.RIGHT_PARENTHESIS)) {
-                                defineMethod(params, tokens.get(auxIndex+2).getName(), tokens.get(auxIndex+3).getName());
+                                defineMethod(params, tokens.get(auxIndex + 2).getName(), tokens.get(auxIndex + 3).getName());
                                 if (match(JavaLexer.LEFT_BRACKET)) {
                                     if (Enunciados()) {
                                         if (match(JavaLexer.RIGHT_BRACKET)) {
@@ -225,7 +217,7 @@ public class JavaParser {
                 if (match(JavaLexer.EQUALS)) {
                     if (match(JavaLexer.STRING) || match(JavaLexer.NUM) || match(JavaLexer.BOOL)) {
                         if (match(JavaLexer.SEMICOLON)) {
-                            generator.createTupleAsignacion(auxIndex+1, tokenIndex);
+                            generator.createTupleAsignacion(auxIndex + 1, tokenIndex);
                             return true;
                         }
                     }
@@ -290,7 +282,8 @@ public class JavaParser {
 
         tokenIndex = auxIndex;
 
-        if (tokens.get(tokenIndex).getType().getName().equals(JavaLexer.IDENTIFIER)) {
+        if (tokens.get(tokenIndex).getType().getName().equals(JavaLexer.IDENTIFIER)
+                && !(ex instanceof SemanticException)) {
             if (Asignacion()) return true;
         }
 
@@ -367,7 +360,7 @@ public class JavaParser {
                     if (match(JavaLexer.EQUALS)) {
                         if (Valor()) {
                             if (match(JavaLexer.SEMICOLON)) {
-                                generator.createTupleAsignacion(auxIndex, tokenIndex+2);
+                                generator.createTupleAsignacion(auxIndex, tokenIndex + 2);
                                 return true;
                             }
                         }
@@ -426,7 +419,7 @@ public class JavaParser {
                 if (match(JavaLexer.DOT)) {
                     if (match(JavaLexer.READ)) {
                         if (match(JavaLexer.SEMICOLON)) {
-                            generator.createTupleLeer(auxIndex-2);
+                            generator.createTupleLeer(auxIndex - 2);
                             return true;
                         }
                     }
@@ -566,7 +559,7 @@ public class JavaParser {
                 if (match(JavaLexer.RELATIONAL)) {
                     if (Valor()) {
                         if (match(JavaLexer.RIGHT_PARENTHESIS)) {
-                            generator.createTupleComparacion(auxIndex+1);
+                            generator.createTupleComparacion(auxIndex + 1);
                             return true;
                         }
                     }
@@ -616,14 +609,14 @@ public class JavaParser {
                                         if (match(JavaLexer.RELATIONAL)) {
                                             if (Valor()) {
                                                 if (match(JavaLexer.SEMICOLON)) {
-                                                    generator.createTupleComparacion(auxIndex+7);
+                                                    generator.createTupleComparacion(auxIndex + 7);
                                                     incrementDecrementIndex = tokenIndex;
                                                     if (IncrementDecrement()) {
                                                         if (match(JavaLexer.RIGHT_PARENTHESIS)) {
                                                             if (match(JavaLexer.LEFT_BRACKET)) {
                                                                 if (Enunciados()) {
                                                                     if (match(JavaLexer.RIGHT_BRACKET)) {
-                                                                        generator.createTupleAsignacion(incrementDecrementIndex, incrementDecrementIndex+8);
+                                                                        generator.createTupleAsignacion(incrementDecrementIndex, incrementDecrementIndex + 8);
                                                                         generator.connectMientras(tupleIndex);
                                                                         return true;
                                                                     }

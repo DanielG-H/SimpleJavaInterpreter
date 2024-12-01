@@ -9,7 +9,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Main {
-    public static void main(String[] args) throws SyntaxException {
+    public static void main(String[] args) throws Exception {
         String input = read("src/test/programtest.txt");
         JavaLexer lexer = new JavaLexer();
         GlobalScope globalScope = new GlobalScope();
