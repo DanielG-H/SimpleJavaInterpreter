@@ -7,6 +7,8 @@ import java.util.Map;
 public class MethodSymbol extends Symbol implements Scope {
     Scope enclosingScope;
     Map<String, Symbol> symbols = new LinkedHashMap<>();
+    int initMethodTuple = 0;
+    int endMethodTuple = 0;
 
     public MethodSymbol(String name, ArrayList<VariableSymbol> orderedArgs, Scope enclosingScope) {
         super(name);
@@ -47,5 +49,21 @@ public class MethodSymbol extends Symbol implements Scope {
         }
 
         return null;
+    }
+
+    public int getInitMethodTuple() {
+        return initMethodTuple;
+    }
+
+    public void setInitMethodTuple(int initMethodTuple) {
+        this.initMethodTuple = initMethodTuple;
+    }
+
+    public int getEndMethodTuple() {
+        return endMethodTuple;
+    }
+
+    public void setEndMethodTuple(int endMethodTuple) {
+        this.endMethodTuple = endMethodTuple;
     }
 }

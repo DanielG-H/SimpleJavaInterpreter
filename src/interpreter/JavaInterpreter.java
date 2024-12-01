@@ -1,16 +1,18 @@
 package interpreter;
 
+import generator.EndMethod;
 import generator.FinPrograma;
+import generator.InvokeMethod;
 import generator.Tuple;
 import scope.Scope;
 
 import java.util.ArrayList;
 
 public class JavaInterpreter {
-    Scope st;
+    Scope currentScope;
 
     public JavaInterpreter(Scope st) {
-        this.st = st;
+        this.currentScope = st;
     }
 
     public void interpret(ArrayList<Tuple> tuples) {
@@ -18,7 +20,12 @@ public class JavaInterpreter {
         Tuple t = tuples.getFirst();
 
         do {
-            tupleIndex = t.execute(st);
+            if (t instanceof InvokeMethod) {
+                currentScope = ((InvokeMethod) t).getMethod();
+            } else if (t instanceof EndMethod) {
+                currentScope = currentScope.getEnclosingScope();
+            }
+            tupleIndex = t.execute(currentScope);
             t = tuples.get(tupleIndex);
         } while (!(t instanceof FinPrograma));
     }

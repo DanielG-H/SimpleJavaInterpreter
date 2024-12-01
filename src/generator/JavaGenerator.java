@@ -1,5 +1,7 @@
 package generator;
 
+import scope.MethodSymbol;
+
 import java.util.ArrayList;
 
 public class JavaGenerator {
@@ -69,11 +71,33 @@ public class JavaGenerator {
                 tuples.size()+1));
     }
 
+    public void createMethodTuple() {
+        tuples.add(new Method(tuples.size()+1, tuples.size()+1));
+    }
+
+    public void createEndMethodTuple() {
+        tuples.add(new EndMethod(tuples.size()+1, tuples.size()+1));
+    }
+
+    public void createInvokeMethodTuple(int initialTuple, MethodSymbol method, ArrayList<Tuple> tuples) {
+        tuples.add(new InvokeMethod(method, initialTuple, tuples, tuples.size()+1, tuples.size()+1));
+    }
+
     public void createTupleFinPrograma() {
         tuples.add(new FinPrograma());
     }
 
     // connect
+
+    public void connectMethod(int initialTuple, MethodSymbol method) {
+        int finalTuple = tuples.size()-1;
+
+        tuples.get(initialTuple).setJumpFalse(finalTuple+1);
+        tuples.get(initialTuple).setJumpTrue(finalTuple+1);
+
+        method.setInitMethodTuple(initialTuple + 1);
+        method.setEndMethodTuple(finalTuple);
+    }
 
     public void connectSi(int initialTuple) {
         int finalTuple = tuples.size()-1;

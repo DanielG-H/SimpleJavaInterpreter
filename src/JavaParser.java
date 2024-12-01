@@ -142,6 +142,8 @@ public class JavaParser {
     private boolean Method() {
         ArrayList<VariableSymbol> params = new ArrayList<>();
         int auxIndex = tokenIndex;
+        int tupleIndex = generator.getTuples().size();
+
         if (match(JavaLexer.PUBLIC)) {
             if (match(JavaLexer.STATIC)) {
                 if (basicTypes() || match(JavaLexer.VOID)) {
@@ -155,8 +157,11 @@ public class JavaParser {
                             if (match(JavaLexer.RIGHT_PARENTHESIS)) {
                                 defineMethod(params, tokens.get(auxIndex + 2).getName(), tokens.get(auxIndex + 3).getName());
                                 if (match(JavaLexer.LEFT_BRACKET)) {
+                                    generator.createMethodTuple();
                                     if (Enunciados()) {
                                         if (match(JavaLexer.RIGHT_BRACKET)) {
+                                            generator.createEndMethodTuple();
+                                            generator.connectMethod(tupleIndex, (MethodSymbol) currentScope.resolve(tokens.get(auxIndex + 3).getName()));
                                             currentScope = currentScope.getEnclosingScope();
                                             return true;
                                         }
@@ -186,6 +191,7 @@ public class JavaParser {
 
     private boolean invokeMethod() {
         int auxIndex = tokenIndex;
+        int tupleIndex = generator.getTuples().size();
         if (match(JavaLexer.IDENTIFIER)) {
             if (match(JavaLexer.LEFT_PARENTHESIS)) {
                 if (resolveMethod()) {
@@ -195,7 +201,10 @@ public class JavaParser {
                         }
                     }
                     if (match(JavaLexer.RIGHT_PARENTHESIS)) {
-                        if (match(JavaLexer.SEMICOLON)) return true;
+                        if (match(JavaLexer.SEMICOLON)) {
+                            generator.createInvokeMethodTuple(tupleIndex, (MethodSymbol) currentScope.resolve(tokens.get(auxIndex).getName()), generator.getTuples());
+                            return true;
+                        }
                     }
                 }
             }
