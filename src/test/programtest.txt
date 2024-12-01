@@ -2,12 +2,18 @@ public class Promedio {
     public static void method1() {
        System.out.println("hello");
     }
+    public static void method2(float param1, float param2) {
+      float suma = 0;
+      suma = param1 + param2;
+      System.out.println(suma);
+    }
     public static void main(String[] args) {
      Scanner scanner = new Scanner(System.in);
 
                 int numeroDeElementos;
                 double promedio = 0;
 
+                method1();
                 System.out.println("Ingrese el número de elementos: ");
                 numeroDeElementos = scanner.nextInt();
 
@@ -20,6 +26,6 @@ public class Promedio {
                 promedio /= numeroDeElementos;
 
                 System.out.println("El promedio es: " + promedio);
-                method1();
+                method2(2, promedio);
     }
 }

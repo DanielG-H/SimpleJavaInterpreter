@@ -79,8 +79,8 @@ public class JavaGenerator {
         tuples.add(new EndMethod(tuples.size()+1, tuples.size()+1));
     }
 
-    public void createInvokeMethodTuple(int initialTuple, MethodSymbol method, ArrayList<Tuple> tuples) {
-        tuples.add(new InvokeMethod(method, initialTuple, tuples, tuples.size()+1, tuples.size()+1));
+    public void createInvokeMethodTuple(int initialTuple, MethodSymbol method, ArrayList<Token> arguments, ArrayList<Tuple> tuples) {
+        tuples.add(new InvokeMethod(method, initialTuple, tuples, arguments, tuples.size()+1, tuples.size()+1));
     }
 
     public void createTupleFinPrograma() {

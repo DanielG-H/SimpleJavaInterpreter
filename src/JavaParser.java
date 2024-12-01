@@ -160,9 +160,9 @@ public class JavaParser {
                                     generator.createMethodTuple();
                                     if (Enunciados()) {
                                         if (match(JavaLexer.RIGHT_BRACKET)) {
+                                            currentScope = currentScope.getEnclosingScope();
                                             generator.createEndMethodTuple();
                                             generator.connectMethod(tupleIndex, (MethodSymbol) currentScope.resolve(tokens.get(auxIndex + 3).getName()));
-                                            currentScope = currentScope.getEnclosingScope();
                                             return true;
                                         }
                                     }
@@ -192,17 +192,20 @@ public class JavaParser {
     private boolean invokeMethod() {
         int auxIndex = tokenIndex;
         int tupleIndex = generator.getTuples().size();
+        ArrayList<Token> arguments = new ArrayList<>();
         if (match(JavaLexer.IDENTIFIER)) {
             if (match(JavaLexer.LEFT_PARENTHESIS)) {
                 if (resolveMethod()) {
                     if (Valor()) {
+                        arguments.add(tokens.get(tokenIndex-1));
                         while (match(JavaLexer.COMMA)) {
                             if (!Valor()) return false;
+                            arguments.add(tokens.get(tokenIndex-1));
                         }
                     }
                     if (match(JavaLexer.RIGHT_PARENTHESIS)) {
                         if (match(JavaLexer.SEMICOLON)) {
-                            generator.createInvokeMethodTuple(tupleIndex, (MethodSymbol) currentScope.resolve(tokens.get(auxIndex).getName()), generator.getTuples());
+                            generator.createInvokeMethodTuple(tupleIndex, (MethodSymbol) currentScope.resolve(tokens.get(auxIndex).getName()), arguments, generator.getTuples());
                             return true;
                         }
                     }
