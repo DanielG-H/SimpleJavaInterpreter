@@ -1,5 +1,6 @@
 package scope;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -7,7 +8,7 @@ public class MethodSymbol extends Symbol implements Scope {
     Scope enclosingScope;
     Map<String, Symbol> symbols = new LinkedHashMap<>();
 
-    public MethodSymbol(String name, VariableSymbol[] orderedArgs, Scope enclosingScope) {
+    public MethodSymbol(String name, ArrayList<VariableSymbol> orderedArgs, Scope enclosingScope) {
         super(name);
         this.enclosingScope = enclosingScope;
 

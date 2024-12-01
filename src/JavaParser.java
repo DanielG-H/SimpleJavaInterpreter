@@ -57,13 +57,34 @@ public class JavaParser {
         System.out.println("Definida");
     }
 
+    private void defineMethod(ArrayList<VariableSymbol> parameters, String methodType, String methodIdentifier) {
+        BuiltInTypeSymbol b = (BuiltInTypeSymbol) currentScope.resolve(methodType);
+        if (b == null) {
+            throw new SemanticException("El tipo: '" + methodType + "' no fue definido.");
+        }
+
+        MethodSymbol m = new MethodSymbol(methodIdentifier, parameters, currentScope);
+        currentScope.define(m);
+        currentScope = m;
+        System.out.println("Definida");
+    }
+
+    private void resolveTypeParams(ArrayList<VariableSymbol> parameters) {
+        BuiltInTypeSymbol b = (BuiltInTypeSymbol) currentScope.resolve(tokens.get(tokenIndex - 2).getName());
+        if (b == null) {
+            throw new SemanticException("El tipo: '" + tokens.get(tokenIndex - 2).getName() + "' no fue definido.");
+        }
+        parameters.add(new VariableSymbol(tokens.get(tokenIndex - 1).getName(), b));
+    }
+
     private boolean resolve() throws SemanticException {
         VariableSymbol v = (VariableSymbol) currentScope.resolve(tokens.get(tokenIndex - 1).getName());
         return resolveInternal(v);
     }
 
     private boolean resolveMethod() {
-        MethodSymbol m = (MethodSymbol) currentScope.resolve(tokens.get(tokenIndex - 1).getName());
+        System.out.println("Este es el metodo a resolve: " + tokens.get(tokenIndex - 2).getName());
+        MethodSymbol m = (MethodSymbol) currentScope.resolve(tokens.get(tokenIndex - 2).getName());
         return resolveInternal(m);
     }
 
@@ -127,22 +148,24 @@ public class JavaParser {
     }
 
     private boolean Method() {
+        ArrayList<VariableSymbol> params = new ArrayList<>();
         int auxIndex = tokenIndex;
         if (match(JavaLexer.PUBLIC)) {
             if (match(JavaLexer.STATIC)) {
                 if (basicTypes() || match(JavaLexer.VOID)) {
                     if (match(JavaLexer.IDENTIFIER)) {
                         if (match(JavaLexer.LEFT_PARENTHESIS)) {
-                            if (parameter()) {
+                            if (parameter(params)) {
                                 while (match(JavaLexer.COMMA)) {
-                                    if (!parameter()) return false;
+                                    if (!parameter(params)) return false;
                                 }
                             }
                             if (match(JavaLexer.RIGHT_PARENTHESIS)) {
+                                defineMethod(params, tokens.get(auxIndex+2).getName(), tokens.get(auxIndex+3).getName());
                                 if (match(JavaLexer.LEFT_BRACKET)) {
                                     if (Enunciados()) {
                                         if (match(JavaLexer.RIGHT_BRACKET)) {
-
+                                            currentScope = currentScope.getEnclosingScope();
                                             return true;
                                         }
                                     }
@@ -157,10 +180,13 @@ public class JavaParser {
         return false;
     }
 
-    private boolean parameter() {
+    private boolean parameter(ArrayList<VariableSymbol> parameters) {
         int auxIndex = tokenIndex;
         if (basicTypes()) {
-            if (match(JavaLexer.IDENTIFIER)) return true;
+            if (match(JavaLexer.IDENTIFIER)) {
+                resolveTypeParams(parameters);
+                return true;
+            }
         }
         tokenIndex = auxIndex;
         return false;
@@ -170,13 +196,15 @@ public class JavaParser {
         int auxIndex = tokenIndex;
         if (match(JavaLexer.IDENTIFIER)) {
             if (match(JavaLexer.LEFT_PARENTHESIS)) {
-                if (Valor()) {
-                    while (match(JavaLexer.COMMA)) {
-                        if (!Valor()) return false;
+                if (resolveMethod()) {
+                    if (Valor()) {
+                        while (match(JavaLexer.COMMA)) {
+                            if (!Valor()) return false;
+                        }
                     }
-                }
-                if (match(JavaLexer.RIGHT_PARENTHESIS)) {
-                    if (match(JavaLexer.SEMICOLON)) return true;
+                    if (match(JavaLexer.RIGHT_PARENTHESIS)) {
+                        if (match(JavaLexer.SEMICOLON)) return true;
+                    }
                 }
             }
         }
@@ -258,13 +286,13 @@ public class JavaParser {
 
         tokenIndex = auxIndex;
 
-        if (tokens.get(tokenIndex).getType().getName().equals(JavaLexer.IDENTIFIER)) {
-            if (Asignacion()) return true;
-        }
+        if (invokeMethod()) return true;
 
         tokenIndex = auxIndex;
 
-        if (invokeMethod()) return true;
+        if (tokens.get(tokenIndex).getType().getName().equals(JavaLexer.IDENTIFIER)) {
+            if (Asignacion()) return true;
+        }
 
         tokenIndex = auxIndex;
 
