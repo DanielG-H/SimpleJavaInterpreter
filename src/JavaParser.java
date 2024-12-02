@@ -26,7 +26,6 @@ public class JavaParser {
 
         if (Program()) {
             if (tokenIndex == tokens.size()) {
-                System.out.println("\nLa sintaxis del programa es correcta.");
                 return;
             }
         }
@@ -36,7 +35,6 @@ public class JavaParser {
 
     private boolean match(String name) {
         if (tokens.get(tokenIndex).getType().getName().equals(name)) {
-            System.out.println(name + ": " + tokens.get(tokenIndex).getName());
             tokenIndex++;
             return true;
         }
@@ -48,7 +46,6 @@ public class JavaParser {
     private void define() {
         BuiltInTypeSymbol b = (BuiltInTypeSymbol) currentScope.resolve(tokens.get(tokenIndex - 2).getName());
         currentScope.define(new VariableSymbol(tokens.get(tokenIndex - 1).getName(), b));
-        System.out.println("Definida");
     }
 
     private void defineMethod(ArrayList<VariableSymbol> parameters, String methodType, String methodIdentifier) {
@@ -56,7 +53,6 @@ public class JavaParser {
         MethodSymbol m = new MethodSymbol(methodIdentifier, parameters, currentScope);
         currentScope.define(m);
         currentScope = m;
-        System.out.println("Definida");
     }
 
     private void resolveTypeParams(ArrayList<VariableSymbol> parameters) {
@@ -79,7 +75,6 @@ public class JavaParser {
             ex = new SemanticException("La variable: '" + tokens.get(identifierIndex).getName() + "' no fue declarada.");
             return false;
         }
-        System.out.println("Resuelta");
         return true;
     }
 
