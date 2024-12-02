@@ -3,23 +3,23 @@ package generator;
 import scope.Scope;
 import scope.VariableSymbol;
 
-public class Asignacion extends Tuple {
+public class Assignment extends Tuple {
     Token variable, value1, value2, operator;
 
-    public Asignacion(Token variable, Token value, int jt, int jf) {
+    public Assignment(Token variable, Token value, int jt, int jf) {
         super(jt, jf);
         this.variable = variable;
         this.value1 = value;
     }
 
-    public Asignacion(Token variable, Token value, Token operator, int jt, int jf) {
+    public Assignment(Token variable, Token value, Token operator, int jt, int jf) {
         super(jt, jf);
         this.variable = variable;
         this.value1 = value;
         this.operator = operator;
     }
 
-    public Asignacion(Token variable, Token value1, Token operator, Token value2, int jt, int jf) {
+    public Assignment(Token variable, Token value1, Token operator, Token value2, int jt, int jf) {
         super(jt, jf);
         this.variable = variable;
         this.value1 = value1;

@@ -3,10 +3,10 @@ package generator;
 import scope.Scope;
 import scope.VariableSymbol;
 
-public class Comparacion extends Tuple {
+public class Comparison extends Tuple {
     Token value1, value2, operator;
 
-    public Comparacion(Token value1, Token operator, Token value2, int jt, int jf) {
+    public Comparison(Token value1, Token operator, Token value2, int jt, int jf) {
         super(jt, jf);
         this.value1 = value1;
         this.value2 = value2;

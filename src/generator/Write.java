@@ -3,10 +3,10 @@ package generator;
 import scope.Scope;
 import scope.VariableSymbol;
 
-public class Escribir extends Tuple {
+public class Write extends Tuple {
     Token write, string, variable;
 
-    public Escribir(Token write, Token stringVariable, int jt, int jf) {
+    public Write(Token write, Token stringVariable, int jt, int jf) {
         super(jt, jf);
 
         if (stringVariable.getType().getName().equals("STRING")) {
@@ -17,7 +17,7 @@ public class Escribir extends Tuple {
         this.write = write;
     }
 
-    public Escribir(Token write, Token string, Token variable, int jt, int jf) {
+    public Write(Token write, Token string, Token variable, int jt, int jf) {
         super(jt, jf);
         this.string = string;
         this.variable = variable;

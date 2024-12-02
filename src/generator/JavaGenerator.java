@@ -12,14 +12,14 @@ public class JavaGenerator {
         this.tokens = tokens;
     }
 
-    public void createTupleAsignacion(int initialIndex, int finalIndex) {
+    public void createTupleAssignment(int initialIndex, int finalIndex) {
         if (finalIndex - initialIndex == 4) { // i = 0  expression
-            tuples.add(new Asignacion(tokens.get(initialIndex),
+            tuples.add(new Assignment(tokens.get(initialIndex),
                     tokens.get(initialIndex+2),
                     tuples.size()+1,
                     tuples.size()+1));
         } else if (finalIndex - initialIndex == 6) { // i = i + 1 expression
-            tuples.add(new Asignacion(tokens.get(initialIndex),
+            tuples.add(new Assignment(tokens.get(initialIndex),
                     tokens.get(initialIndex+2),
                     tokens.get(initialIndex+3),
                     tokens.get(initialIndex+4),
@@ -27,14 +27,14 @@ public class JavaGenerator {
                     tuples.size()+1));
 
         } else if (finalIndex - initialIndex == 7) { // i += 1 expression
-            tuples.add(new Asignacion(tokens.get(initialIndex),
+            tuples.add(new Assignment(tokens.get(initialIndex),
                     tokens.get(initialIndex),
                     tokens.get(initialIndex + 1),
                     tokens.get(initialIndex + 3),
                     tuples.size() + 1,
                     tuples.size() + 1));
         } else if (finalIndex - initialIndex == 8){ // i++ expression
-            tuples.add(new Asignacion(tokens.get(initialIndex),
+            tuples.add(new Assignment(tokens.get(initialIndex),
                     tokens.get(initialIndex),
                     tokens.get(initialIndex+1),
                     tuples.size()+1,
@@ -42,20 +42,20 @@ public class JavaGenerator {
         }
     }
 
-    public void createTupleLeer(int initialIndex) {
-        tuples.add(new Leer(tokens.get(initialIndex),
+    public void createTupleRead(int initialIndex) {
+        tuples.add(new Read(tokens.get(initialIndex),
                 tuples.size()+1,
                 tuples.size()+1));
     }
 
-    public void createTupleEscribir(int initialIndex, int finalIndex) {
+    public void createTupleWrite(int initialIndex, int finalIndex) {
         if (finalIndex - initialIndex == 5) {
-            tuples.add(new Escribir(tokens.get(initialIndex),
+            tuples.add(new Write(tokens.get(initialIndex),
                     tokens.get(initialIndex+2),
                     tuples.size()+1,
                     tuples.size()+1));
         } else if (finalIndex - initialIndex == 7) {
-            tuples.add(new Escribir(tokens.get(initialIndex),
+            tuples.add(new Write(tokens.get(initialIndex),
                     tokens.get(initialIndex+2),
                     tokens.get(initialIndex+4),
                     tuples.size()+1,
@@ -63,8 +63,8 @@ public class JavaGenerator {
         }
     }
 
-    public void createTupleComparacion(int initialIndex) {
-        tuples.add(new Comparacion(tokens.get(initialIndex),
+    public void createTupleComparison(int initialIndex) {
+        tuples.add(new Comparison(tokens.get(initialIndex),
                 tokens.get(initialIndex+1),
                 tokens.get(initialIndex+2),
                 tuples.size()+1,
@@ -83,8 +83,8 @@ public class JavaGenerator {
         tuples.add(new InvokeMethod(method, initialTuple, tuples, arguments, tuples.size()+1, tuples.size()+1));
     }
 
-    public void createTupleFinPrograma() {
-        tuples.add(new FinPrograma());
+    public void createTupleProgramEnd() {
+        tuples.add(new ProgramEnd());
     }
 
     // connect
@@ -99,7 +99,7 @@ public class JavaGenerator {
         method.setEndMethodTuple(finalTuple);
     }
 
-    public void connectSi(int initialTuple) {
+    public void connectIf(int initialTuple) {
         int finalTuple = tuples.size()-1;
 
         if (initialTuple >= tuples.size() || initialTuple >= finalTuple) {
@@ -109,7 +109,7 @@ public class JavaGenerator {
         tuples.get(initialTuple).setJumpFalse(finalTuple+1);
     }
 
-    public void connectMientras(int initialTuple) {
+    public void connectWhile(int initialTuple) {
         int finalTuple = tuples.size()-1;
 
         if (initialTuple >= tuples.size() || initialTuple >= finalTuple) {
@@ -122,7 +122,7 @@ public class JavaGenerator {
 
         for (int i = finalTuple; i > initialTuple; i--) {
             Tuple t = tuples.get(i);
-            if (t instanceof Comparacion && (t.getJumpFalse() == (finalTuple + 1))) {
+            if (t instanceof Comparison && (t.getJumpFalse() == (finalTuple + 1))) {
                 t.setJumpFalse(initialTuple);
             }
         }

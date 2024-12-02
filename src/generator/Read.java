@@ -7,10 +7,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class Leer extends Tuple {
+public class Read extends Tuple {
     Token variable;
 
-    public Leer(Token variable, int jt, int jf) {
+    public Read(Token variable, int jt, int jf) {
         super(jt, jf);
         this.variable = variable;
     }

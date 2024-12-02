@@ -1,7 +1,7 @@
 package interpreter;
 
 import generator.EndMethod;
-import generator.FinPrograma;
+import generator.ProgramEnd;
 import generator.InvokeMethod;
 import generator.Tuple;
 import scope.Scope;
@@ -27,6 +27,6 @@ public class JavaInterpreter {
             }
             tupleIndex = t.execute(currentScope);
             t = tuples.get(tupleIndex);
-        } while (!(t instanceof FinPrograma));
+        } while (!(t instanceof ProgramEnd));
     }
 }

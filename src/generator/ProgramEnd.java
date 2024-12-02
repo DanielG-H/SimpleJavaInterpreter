@@ -2,8 +2,8 @@ package generator;
 
 import scope.Scope;
 
-public class FinPrograma extends Tuple {
-    public FinPrograma() {
+public class ProgramEnd extends Tuple {
+    public ProgramEnd() {
         super(-1, -1);
     }
 
